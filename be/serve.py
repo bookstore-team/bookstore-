@@ -1,7 +1,6 @@
 import logging#logging 模块是 Python 内置的标准模块，主要用于输出运行日志，可以设置输出日志的等级、日志保存路径、日志文件回滚等
 import os
 from flask import Flask
-from flask_apscheduler import APScheduler   #导入计时模块
 from flask import Blueprint
 #Blueprint 是一个存储视图方法的容器，这些操作在这个Blueprint被注册到一个应用之后就可以被调用，Flask可以通过Blueprint来组织URL以及处理请求。
 from flask import request
@@ -9,16 +8,6 @@ from be.view import auth
 from be.view import seller
 from be.view import buyer
 from be.model.store import init_database
-
-class Config(object):           #间隔执行类
-    JOBS = [
-        {
-            'id': 'job1',
-            'func': '__main__:auto_cancel',
-            'trigger': 'interval',    # 间隔执行
-            'seconds': 5,
-        }
-    ]
 
 
 bp_shutdown = Blueprint("shutdown", __name__)
@@ -57,10 +46,5 @@ def be_run():
     app.register_blueprint(auth.bp_auth)
     app.register_blueprint(seller.bp_seller)
     app.register_blueprint(buyer.bp_buyer)
-    ####开始计时 CBY
-    app.config.from_object(Config())
-    scheduler = APScheduler()
-    scheduler.init_app(app)
-    scheduler.start()
-    ####
+
     app.run()
