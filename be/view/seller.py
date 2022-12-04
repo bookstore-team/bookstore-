@@ -50,3 +50,15 @@ def send_stock():
     s = seller.Seller()
     code, message = s.send_stock(user_id=user_id, order_id=order_id)
     return jsonify({"message": message}), code
+
+#### lsq:新功能：卖家改价
+@bp_seller.route("/set_book_price", methods=["POST"])
+def set_book_price():
+    user_id: str = request.json.get("user_id")
+    store_id: str = request.json.get("store_id")
+    book_id: str = request.json.get("book_id")
+    book_price: str = request.json.get("book_price")
+
+    s=seller.Seller()
+    code, message=s.set_book_price(user_id,store_id,book_id,book_price)
+    return jsonify({"message":message}), code
