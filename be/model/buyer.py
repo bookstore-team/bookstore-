@@ -121,9 +121,9 @@ class Buyer(db_conn.DBConn):
             # 卖家收钱，钱增多
             cursor = conn.execute("UPDATE user set balance = balance + ?"
                                   "WHERE user_id = ?",
-                                  (total_price, buyer_id))
+                                  (total_price, seller_id))
             if cursor.rowcount == 0:
-                return error.error_non_exist_user_id(buyer_id)
+                return error.error_non_exist_user_id(seller_id)
 
             # 将记录的state改为1，表示已付款 ####CBY
             cursor = conn.execute("UPDATE new_order set order_status = ?"
@@ -200,3 +200,6 @@ class Buyer(db_conn.DBConn):
         except BaseException as e:
             return 530, "{}".format(str(e))
         return 200, "ok"
+
+
+   
