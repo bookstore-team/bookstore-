@@ -82,7 +82,7 @@ class Scraper:
         self.pattern_number = re.compile(r"\d+\.?\d*")
         logging.basicConfig(filename="scraper.log", level=logging.ERROR)
 
-    def get_current_progress(self) -> ():
+    def get_current_progress(self): #-> ()
         conn = sqlite3.connect(self.database)
         results = conn.execute("SELECT tag, page from progress where id = '0'")
         for row in results:
@@ -211,7 +211,7 @@ class Scraper:
                 )
         return has_next
 
-    def get_tag_list(self) -> [str]:
+    def get_tag_list(self): # -> [str]
         ret = []
         conn = sqlite3.connect(self.database)
         results = conn.execute(

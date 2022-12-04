@@ -1,14 +1,3 @@
-import sys
- 
-import logging
- 
-import os
- 
-# 把当前文件所在文件夹的父文件夹路径加入到PYTHONPATH
- 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
-
 import pytest
 
 from fe.access.buyer import Buyer
@@ -76,6 +65,6 @@ class TestPayment:
         assert code == 200
         code = self.buyer.payment(self.order_id)
         assert code == 200
-
+        
         code = self.buyer.payment(self.order_id)
         assert code != 200

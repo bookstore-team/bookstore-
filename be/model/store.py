@@ -26,13 +26,13 @@ class Store:
 
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS store( "
-                "store_id TEXT, book_id TEXT, book_info TEXT, stock_level INTEGER NOT NULL,title TEXT NOT NULL,tag TEXT,author TEXT,content TEXT,book_price INTEGER NOT NULL,"
+                "store_id TEXT, book_id TEXT, book_info TEXT, stock_level INTEGER,title TEXT,tag TEXT,author TEXT,content TEXT,book_price INTEGER NOT NULL,"
                 " PRIMARY KEY(store_id, book_id))"
             )
  # status 0:未付款 1:已付款 2：已发货 3：已收货
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS new_order( "
-                "order_id TEXT PRIMARY KEY, user_id TEXT NOT NULL, store_id TEXT NOT NULL, order_status INTEGER NOT NULL, total_price INTEGER NOT NULL,time INTEGER NOT NULL)"
+                "order_id TEXT PRIMARY KEY, user_id TEXT, store_id TEXT, order_status INTEGER, total_price INTEGER,time INTEGER)"
             )
 
             conn.execute(
