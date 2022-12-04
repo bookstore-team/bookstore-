@@ -4,7 +4,7 @@ import json
 import logging
 from be.model import db_conn
 from be.model import error
-
+import time
 
 class Buyer(db_conn.DBConn):
     def __init__(self):
@@ -18,6 +18,8 @@ class Buyer(db_conn.DBConn):
             if not self.store_id_exist(store_id):
                 return error.error_non_exist_store_id(store_id) + (order_id, )
             uid = "{}_{}_{}".format(user_id, store_id, str(uuid.uuid1()))
+            
+            t_price=0   ####
 
             for book_id, count in id_and_count:
                 cursor = self.conn.execute(
@@ -32,7 +34,7 @@ class Buyer(db_conn.DBConn):
                 book_info = row[2]
                 book_info_json = json.loads(book_info)
                 price = book_info_json.get("price")
-
+                t_price+=price  ####
                 if stock_level < count:
                     return error.error_stock_level_low(book_id) + (order_id,)
 
@@ -49,9 +51,9 @@ class Buyer(db_conn.DBConn):
                         (uid, book_id, count, price))
 
             self.conn.execute(
-                "INSERT INTO new_order(order_id, store_id, user_id) "
-                "VALUES(?, ?, ?);",
-                (uid, store_id, user_id))
+                "INSERT INTO new_order(order_id,user_id,store_id,order_status,total_price,time) "
+                "VALUES(?,?,?,?,?,?);",
+                (uid, user_id, store_id, 0,t_price,time.time()))
             self.conn.commit()
             order_id = uid
         except sqlite.Error as e:

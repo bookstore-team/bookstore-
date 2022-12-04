@@ -50,3 +50,16 @@ class Seller:
         headers = {"token": self.token}
         r = requests.post(url, headers=headers, json=json)
         return r.status_code
+
+    def set_book_price(self, seller_id:str, store_id:str,book_id:str,book_price:int):
+        json={
+            "user_id": seller_id,
+            "store_id": store_id,
+            "book_id": book_id,
+            "book_price": book_price
+        }
+        #print(simplejson.dumps(json))
+        url = urljoin(self.url_prefix, "set_book_price")
+        headers={"token":self.token}
+        r=requests.post(url,headers=headers,json=json)
+        return r.status_code

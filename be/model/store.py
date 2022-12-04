@@ -21,32 +21,32 @@ class Store:
 
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS user_store("
-                "user_id TEXT, store_id, PRIMARY KEY(user_id, store_id));"
+                "user_id TEXT, store_id TEXT, PRIMARY KEY(user_id, store_id));"
             )
 
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS store( "
-                "store_id TEXT, book_id TEXT, book_info TEXT, stock_level INTEGER,"
+                "store_id TEXT, book_id TEXT, book_info TEXT, stock_level INTEGER NOT NULL,title TEXT NOT NULL,tag TEXT,author TEXT,content TEXT,book_price INTEGER NOT NULL,"
                 " PRIMARY KEY(store_id, book_id))"
             )
-
+ # status 0:未付款 1:已付款 2：已发货 3：已收货
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS new_order( "
-                "order_id TEXT PRIMARY KEY, user_id TEXT, store_id TEXT)"
+                "order_id TEXT PRIMARY KEY, user_id TEXT NOT NULL, store_id TEXT NOT NULL, order_status INTEGER NOT NULL, total_price INTEGER NOT NULL,time INTEGER NOT NULL)"
             )
 
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS new_order_detail( "
-                "order_id TEXT, book_id TEXT, count INTEGER, price INTEGER,  "
+                "order_id TEXT, book_id TEXT, count INTEGER NOT NULL, price INTEGER NOT NULL, "
                 "PRIMARY KEY(order_id, book_id))"
             )
-
             conn.commit()
+
         except sqlite.Error as e:
             logging.error(e)
             conn.rollback()
 
-    def get_db_conn(self) -> sqlite.Connection:
+    def get_db_conn(self) -> sqlite.Connection: #该函数返回的值为sqlite.Connection
         return sqlite.connect(self.database)
 
 
