@@ -57,3 +57,13 @@ def search_orders():
     b = Buyer()
     code, message = b.search_orders(user_id, password)
     return jsonify({"message": message}), code
+
+###lsq:新功能：买家申请取消订单
+@bp_buyer.route("/cancel_order", methods=["POST"])
+def cancel_order():
+   user_id = request.json.get("user_id")
+   password = request.json.get("password")
+   order_id = request.json.get("order_id")
+   b=Buyer()
+   code, message=b.cancel_order(user_id, password, order_id)
+   return jsonify({"message": message}), code
