@@ -1,7 +1,5 @@
 import time
-
 import pytest
-
 from fe.access import search
 from fe import conf
 
@@ -10,11 +8,7 @@ class TestSearch:
     @pytest.fixture(autouse=True)
     def pre_run_initialization(self):
         # do before test
-        self.title = "美丽心灵"
-        self.store_id = "store_1"
-        self.author = "[美] 西尔维娅·娜萨"
-        self.tags = "纳什"
-        self.subcontent = "狂人日记 & 孔乙己"
+        # 例子
         self.mysearch = search.Search(conf.URL)
         yield
         # do after test
