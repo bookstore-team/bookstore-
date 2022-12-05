@@ -41,11 +41,19 @@ def add_funds():
     code, message = b.add_funds(user_id, password, add_value)
     return jsonify({"message": message}), code
 
-@bp_buyer.route("/confirm_stock", methods=["POST"]) #买家收货####CBY 
+@bp_buyer.route("/receive_stock", methods=["POST"]) #买家收货####CBY 
 def receive_stock():
     user_id = request.json.get("user_id")
     password = request.json.get("password")
     order_id = request.json.get("order_id")
     b = Buyer()
     code, message = b.receive_stock(user_id, password, order_id)
+    return jsonify({"message": message}), code
+
+@bp_buyer.route("/search_orders", methods=["POST"]) #买家查询订单####CBY
+def search_orders():
+    user_id = request.json.get("user_id")
+    password = request.json.get("password")
+    b = Buyer()
+    code, message = b.search_orders(user_id, password)
     return jsonify({"message": message}), code

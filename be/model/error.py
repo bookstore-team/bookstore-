@@ -13,7 +13,7 @@ error_code = {
     520: "order hasn't been received {}", ##未签收
     521: "order hasn't been dispatched {}", ##未发货
     522: "",
-    523: "",
+    523: "non exist order id{}", ##未查询到订单id
     524: "",
     525: "",
     526: "",
@@ -71,3 +71,6 @@ def error_order_not_received (order_id):  ##未签收
 
 def error_order_not_dispatched (order_id):  ##未发货
     return 521,error_code[521].format(order_id)
+
+def error_non_exist_order_id (user_id):     ##未查询到订单id 
+    return 523,error_code[523].format(user_id)

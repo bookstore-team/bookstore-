@@ -15,7 +15,7 @@ class TestReceiveStock:
         self.buyer_id = "test_receive_buyer_id_{}".format(str(uuid.uuid1()))
         self.password = self.seller_id
         gen_book = GenBook(self.seller_id, self.store_id)
-        self.seller=gen_book.seller ####register_new_seller生成seller CBY
+        self.seller=gen_book.seller ####register_new_seller生成seller 
         ok, buy_book_id_list = gen_book.gen(non_exist_book_id=False, low_stock_level=False, max_book_count=5)
         self.buy_book_info_list = gen_book.buy_book_info_list
         assert ok

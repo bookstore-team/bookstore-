@@ -201,5 +201,53 @@ class Buyer(db_conn.DBConn):
             return 530, "{}".format(str(e))
         return 200, "ok"
 
+#买家查询订单信息   ####CBY
+    def search_orders (self , user_id : str , password : str):  #-> (int,str)
+        try:
+            #先验证用户信息与密码
+            if not self.user_id_exist(user_id):
+                return error.error_non_exist_user_id(user_id)
+            cursor = self.conn.execute("SELECT password from user where user_id=?", (user_id,))
+            row = cursor.fetchone()
+            if row is None:
+                return error.error_authorization_fail()
+            if row[0] != password:
+                return error.error_authorization_fail()
 
-   
+            #根据user_id搜索订单
+            cursor = self.conn.execute("SELECT order_id,order_status from new_order where user_id=?", (user_id,))
+            rows = cursor.fetchall() #((order_id,order_status),(order_id,order_status),...(order_id,order_status))             
+            if rows is None :#没有查询到任何订单，报错
+                return error.error_non_exist_order_id(user_id)
+            orders_0=[]#未付款订单
+            orders_1=[]#已付款未发货订单  
+            orders_2=[]#已发货未收货订单  
+            orders_3=[]#已收货订单  
+            orders_4=[]#取消过的订单   
+            for orders in rows:  #遍历每一个(order_id,order_status)
+                status=orders[1]
+                cursor_ = self.conn.execute("SELECT book_id,count,price FROM new_order_detail WHERE order_id = ?", (orders[0],))
+                row=cursor_.fetchall()   #((book_id,count,price),...(book_id,count,price))
+                for goods in row:   #遍历每个(book_id,count,price)
+                    if status==0:
+                        orders_0.append({"user_id":user_id,"order_id":orders[0],"book_id":goods[0],"count":goods[1],"price":goods[2]})
+                    elif status==1:
+                        orders_1.append({"user_id":user_id,"order_id":orders[0],"book_id":goods[0],"count":goods[1],"price":goods[2]})
+                    elif status==2:
+                        orders_2.append({"user_id":user_id,"order_id":orders[0],"book_id":goods[0],"count":goods[1],"price":goods[2]})
+                    elif status==3:
+                        orders_3.append({"user_id":user_id,"order_id":orders[0],"book_id":goods[0],"count":goods[1],"price":goods[2]})
+                    elif status==-1:
+                        orders_4.append({"user_id":user_id,"order_id":orders[0],"book_id":goods[0],"count":goods[1],"price":goods[2]})
+            self.conn.commit()
+            list_orders=[orders_0,orders_1,orders_2,orders_3,orders_4]  #总订单
+        except BaseException as e:
+            print(e)
+            return 530, "{}".format(str(e))
+        return 200,list_orders  #传回
+
+
+
+
+
+
