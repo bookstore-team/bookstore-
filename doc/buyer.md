@@ -1,17 +1,19 @@
 ## 买家下单
 
 #### URL：
+
 POST http://[address]/buyer/new_order
 
 #### Request
 
 ##### Header:
 
-key | 类型 | 描述 | 是否可为空
----|---|---|---
-token | string | 登录产生的会话标识 | N
+| key   | 类型   | 描述               | 是否可为空 |
+| ----- | ------ | ------------------ | ---------- |
+| token | string | 登录产生的会话标识 | N          |
 
 ##### Body:
+
 ```json
 {
   "user_id": "buyer_id",
@@ -31,33 +33,33 @@ token | string | 登录产生的会话标识 | N
 
 ##### 属性说明：
 
-变量名 | 类型 | 描述 | 是否可为空
----|---|---|---
-user_id | string | 买家用户ID | N
-store_id | string | 商铺ID | N
-books | class | 书籍购买列表 | N
+| 变量名   | 类型   | 描述         | 是否可为空 |
+| -------- | ------ | ------------ | ---------- |
+| user_id  | string | 买家用户ID   | N          |
+| store_id | string | 商铺ID       | N          |
+| books    | class  | 书籍购买列表 | N          |
 
 books数组：
 
-变量名 | 类型 | 描述 | 是否可为空
----|---|---|---
-id | string | 书籍的ID | N
-count | string | 购买数量 | N
-
+| 变量名 | 类型   | 描述     | 是否可为空 |
+| ------ | ------ | -------- | ---------- |
+| id     | string | 书籍的ID | N          |
+| count  | string | 购买数量 | N          |
 
 #### Response
 
 Status Code:
 
-码 | 描述
---- | ---
-200 | 下单成功
-5XX | 买家用户ID不存在
-5XX | 商铺ID不存在
-5XX | 购买的图书不存在
-5XX | 商品库存不足
+| 码  | 描述             |
+| --- | ---------------- |
+| 200 | 下单成功         |
+| 5XX | 买家用户ID不存在 |
+| 5XX | 商铺ID不存在     |
+| 5XX | 购买的图书不存在 |
+| 5XX | 商品库存不足     |
 
 ##### Body:
+
 ```json
 {
   "order_id": "uuid"
@@ -66,19 +68,20 @@ Status Code:
 
 ##### 属性说明：
 
-变量名 | 类型 | 描述 | 是否可为空
----|---|---|---
-order_id | string | 订单号，只有返回200时才有效 | N
-
+| 变量名   | 类型   | 描述                        | 是否可为空 |
+| -------- | ------ | --------------------------- | ---------- |
+| order_id | string | 订单号，只有返回200时才有效 | N          |
 
 ## 买家付款
 
 #### URL：
+
 POST http://[address]/buyer/payment
 
 #### Request
 
 ##### Body:
+
 ```json
 {
   "user_id": "buyer_id",
@@ -89,35 +92,33 @@ POST http://[address]/buyer/payment
 
 ##### 属性说明：
 
-变量名 | 类型 | 描述 | 是否可为空
----|---|---|---
-user_id | string | 买家用户ID | N
-order_id | string | 订单ID | N
-password | string | 买家用户密码 | N 
-
+| 变量名   | 类型   | 描述         | 是否可为空 |
+| -------- | ------ | ------------ | ---------- |
+| user_id  | string | 买家用户ID   | N          |
+| order_id | string | 订单ID       | N          |
+| password | string | 买家用户密码 | N          |
 
 #### Response
 
 Status Code:
 
-码 | 描述
---- | ---
-200 | 付款成功
-5XX | 账户余额不足
-5XX | 无效参数
-401 | 授权失败 
-
+| 码  | 描述         |
+| --- | ------------ |
+| 200 | 付款成功     |
+| 5XX | 账户余额不足 |
+| 5XX | 无效参数     |
+| 401 | 授权失败     |
 
 ## 买家充值
 
 #### URL：
+
 POST http://[address]/buyer/add_funds
 
 #### Request
 
-
-
 ##### Body:
+
 ```json
 {
   "user_id": "user_id",
@@ -128,17 +129,54 @@ POST http://[address]/buyer/add_funds
 
 ##### 属性说明：
 
-key | 类型 | 描述 | 是否可为空
----|---|---|---
-user_id | string | 买家用户ID | N
-password | string | 用户密码 | N
-add_value | int | 充值金额，以分为单位 | N
+| key       | 类型   | 描述                 | 是否可为空 |
+| --------- | ------ | -------------------- | ---------- |
+| user_id   | string | 买家用户ID           | N          |
+| password  | string | 用户密码             | N          |
+| add_value | int    | 充值金额，以分为单位 | N          |
 
+#### Response
 
 Status Code:
 
-码 | 描述
---- | ---
-200 | 充值成功
-401 | 授权失败
-5XX | 无效参数
+| 码  | 描述     |
+| --- | -------- |
+| 200 | 充值成功 |
+| 401 | 授权失败 |
+| 5XX | 无效参数 |
+
+## 买家自主取消订单
+
+#### URL:
+
+POST http://[address]/buyer/cancel_order
+
+#### Resquest
+
+##### Body:
+
+```json
+{
+	"user_id":"user_id",
+	"password":"password",
+	"order_id":"order_id"
+}
+```
+
+##### 属性说明：
+
+| key      | 类型   | 描述         | 是否可为空 |
+| -------- | ------ | ------------ | ---------- |
+| user_id  | string | 买家用户ID   | N          |
+| password | string | 买家用户密码 | N          |
+| order_id | string | 订单ID       | N          |
+
+#### Response
+
+Status Code:
+
+| 码  | 描述                                                                 |
+| --- | -------------------------------------------------------------------- |
+| 401 | 用户密码错误，无法登录取消订单                                       |
+| 522 | 已发货但买家申请取消订单，此时不可取消订单                           |
+| 200 | 未付款买家申请取消订单，或已付款未发货申请取消订单，此时订单可以取消 |
