@@ -13,16 +13,13 @@ def auto_cancel(): #自动清除订单######CBY
     conn=store.get_db_conn()
     cursor=conn.execute("SELECT order_id,time,store_id FROM new_order WHERE order_status = ?", (0,))
     rows = cursor.fetchall()    #((id,time,store_id ),(id,time,store_id ),...(id,time,store_id ))
-
     for content in rows:
         end_time = time.time()
         if (end_time - content[1] >= 600):  # 付款时间超过10分钟自动取消
             cursor = conn.execute("UPDATE new_order set order_status = ?"
-                                "WHERE order_id = ?",(-1, content[0])) 
-            
-            cursor_ = conn.execute("SELECT book_id,count FROM new_order_detail WHERE order_id = ?", (content[0]),)
-            rows_ = cursor_.fetchall()      #((book_id,cnt),(book_id,cnt),...(book_id,cnt))
-            
+                                "WHERE order_id = ?",(-1, content[0]))             
+            cursor_ = conn.execute("SELECT book_id,count FROM new_order_detail WHERE order_id = ?", (content[0],))
+            rows_ = cursor_.fetchall()      #((book_id,cnt),(book_id,cnt),...(book_id,cnt))          
             for order in rows_:
                 cursor = conn.execute(
                         "UPDATE store set stock_level = stock_level + ? "

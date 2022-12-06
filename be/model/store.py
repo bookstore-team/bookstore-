@@ -1,7 +1,5 @@
 import logging
 import os
-import jieba
-import numpy as np
 import sqlite3 as sqlite
 
 
@@ -42,13 +40,6 @@ class Store:
                 "order_id TEXT, book_id TEXT, count INTEGER NOT NULL, price INTEGER NOT NULL, "
                 "PRIMARY KEY(order_id, book_id))"
             )
-            # search
-            conn.execute(
-                "CREATE TABLE IF NOT EXISTS new_search( "
-                "user_id TEXT, store_id TEXT, book_id TEXT, count INTEGER NOT NULL, price INTEGER NOT NULL, "
-                "PRIMARY KEY(order_id, book_id))"
-            )
-            
             conn.commit()
 
         except sqlite.Error as e:
@@ -70,5 +61,3 @@ def init_database(db_path):
 def get_db_conn():
     global database_instance
     return database_instance.get_db_conn()
-
-# 不知道是不是还要加一段

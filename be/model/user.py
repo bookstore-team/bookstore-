@@ -6,12 +6,6 @@ from be.model import error
 from be.model import db_conn
 
 # encode a json string like:
-# {
-#       "user_id": [user name],
-#       "terminal": [terminal code],
-#       "timestamp": [ts] to a JWT
-# }
-# decode a JWT to a json string like:
 #   {
 #       "user_id": [user name],
 #       "terminal": [terminal code],
@@ -28,7 +22,12 @@ def jwt_encode(user_id: str, terminal: str) -> str:
     return encoded.encode("utf-8").decode("utf-8")
 
 
-
+# decode a JWT to a json string like:
+#   {
+#       "user_id": [user name],
+#       "terminal": [terminal code],
+#       "timestamp": [ts]} to a JWT
+#   }
 def jwt_decode(encoded_token, user_id: str) -> str:
     decoded = jwt.decode(encoded_token, key=user_id, algorithms="HS256")
     return decoded
@@ -158,46 +157,46 @@ class User(db_conn.DBConn):
         except BaseException as e:
             return 530, "{}".format(str(e))
         return 200, "ok"
-    
-    # yh
 
-    def params_search(self, title=None, author=None, tags=None, store_id=None):
-        flag = (title is None) & (author is None) & (tags is None) & (store_id is None)
+    # yh
+    # 模糊查询
+    def params_search(self, title: str, author: str, tag: str, store_id: str):
+        flag = (title is None) & (author is None) & (tag is None) & (store_id is None)
         have_restrict = 0
         try:
             values = []
             if flag == 1:
-                sql = "select title from Book"
+                sql = "select title from store"
             else:
-                sql = "select title from Book where"
+                sql = "select title from store where"
 
             if store_id is not None:
-                sql += " book_id in (select book_id from Store where store_id = %s)"
+                sql += " book_id in (select book_id from store where store_id = ?)"
                 values.append(store_id)
                 have_restrict = 1
 
             if title is not None:
                 if have_restrict == 0:
-                    sql += " title = %s"
+                    sql += " title = ?"
                 else:
-                    sql += " and title = %s"
+                    sql += " and title = ?"
                 values.append(title)
                 have_restrict = 1
 
             if author is not None:
                 if have_restrict == 0:
-                    sql += " author = %s"
+                    sql += " author = ?"
                 else:
-                    sql += " and author = %s"
+                    sql += " and author = ?"
                 values.append(author)
                 have_restrict = 1
 
-            if tags is not None:
+            if tag is not None:
                 if have_restrict == 0:
-                    sql += " position (%s in Book.tags)>0"
+                    sql += " tag like ?"
                 else:
-                    sql += " and position (%s in Book.tags)>0"
-                values.append(tags)
+                    sql += " and tag like ?"
+                values.append("%" + tag + "%")
 
             if store_id is not None:
                 if not self.store_id_exist(store_id):
@@ -207,23 +206,8 @@ class User(db_conn.DBConn):
             else:
                 self.conn.execute(sql, values)
         except sqlite.Error as e:
-            return 528, "{}".format(str(e))
-        except BaseException as e:
+            print(sql)
             print(e)
-            return 530, "{}".format(str(e))
-        return 200, "ok"
-
-    def whole_content_search(self, sub_content: str, store_id=None):
-        try:
-            if store_id is None:
-                self.conn.execute("select book_id from Book where tscontent @@ to_tsquery('%s');"%sub_content)
-            else:
-                if not self.store_id_exist(store_id):
-                    return error.error_non_exist_store_id(store_id)
-                else:
-                    sql = "select book_id from Book where tscontent @@ to_tsquery('simple',%s) and book_id in (select book_id from Store where store_id = %s);"
-                    self.conn.execute(sql, (sub_content, store_id))
-        except sqlite.Error as e:
             return 528, "{}".format(str(e))
         except BaseException as e:
             print(e)

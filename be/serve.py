@@ -47,6 +47,5 @@ def be_run():
     app.register_blueprint(auth.bp_auth)
     app.register_blueprint(seller.bp_seller)
     app.register_blueprint(buyer.bp_buyer)
-    app.register_blueprint(search.bp_search)
-
+    app.register_blueprint(search.bp_search)##
     app.run()
