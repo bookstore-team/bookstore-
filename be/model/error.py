@@ -14,8 +14,8 @@ error_code = {
     521: "order hasn't been dispatched {}", ##未发货
     522: "order has been dispatched {}", ##已发货
     523: "non exist order id{}", ##未查询到订单id
-    524: "",
-    525: "",
+    524: "non exist book {}", #未查询到匹配的书籍
+    525: "non exist author's book", #未查询到匹配的作者作品
     526: "",
     527: "",
     528: "",
@@ -71,9 +71,16 @@ def error_order_not_received (order_id):  ##未签收
 
 def error_order_not_dispatched (order_id):  ##未发货
     return 521,error_code[521].format(order_id)
-
+    
 def error_order_dispatched (order_id):  ##已发货
     return 522, error_code[522].format(order_id)
 
+
 def error_non_exist_order_id (user_id):     ##未查询到订单id 
     return 523,error_code[523].format(user_id)
+
+def error_non_exist_book (search_key):     ##未查询到匹配的书籍 
+    return 524,error_code[524].format(search_key)
+
+def error_non_exist_author (search_key):     ##未查询到作者作品
+    return 525,error_code[525].format(search_key)

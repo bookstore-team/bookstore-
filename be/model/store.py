@@ -2,13 +2,15 @@ import logging
 import os
 import sqlite3 as sqlite
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker # 创建会话
 
 class Store:
     database: str
 
     def __init__(self, db_path):
         self.database = os.path.join(db_path, "be.db")
-        self.init_tables()
+        # self.init_tables()
 
     def init_tables(self):
         try:
@@ -46,7 +48,13 @@ class Store:
             logging.error(e)
             conn.rollback()
 
-    def get_db_conn(self) -> sqlite.Connection: #该函数返回的值为sqlite.Connection
+    def get_db_conn(self) : #-> sqlite.Connection该函数返回的值为sqlite.Connection
+        # 用户名:密码@localhost:端口/数据库名
+        engine = create_engine('postgresql://postgres:mbyc020905@localhost:5432/bookstore')
+        # 创建session
+        DbSession=sessionmaker(bind=engine)
+        self.session=DbSession() 
+
         return sqlite.connect(self.database)
 
 
