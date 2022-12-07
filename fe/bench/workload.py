@@ -8,7 +8,7 @@ from fe.access.new_buyer import register_new_buyer
 from fe.access.buyer import Buyer
 from fe import conf
 
-
+#创建新的订单
 class NewOrder:
     def __init__(self, buyer: Buyer, store_id, book_id_and_count):
         self.buyer = buyer
@@ -19,7 +19,7 @@ class NewOrder:
         code, order_id = self.buyer.new_order(self.store_id, self.book_id_and_count)
         return code == 200, order_id
 
-
+#买家支付
 class Payment:
     def __init__(self, buyer:Buyer, order_id):
         self.buyer = buyer
@@ -39,7 +39,7 @@ class Workload:
         self.book_db = book.BookDB(conf.Use_Large_DB)
         self.row_count = self.book_db.get_book_count()
 
-        self.book_num_per_store = conf.Book_Num_Per_Store
+        self.book_num_per_store = conf.Book_Num_Per_Store #2000
         if self.row_count < self.book_num_per_store:
             self.book_num_per_store = self.row_count
         self.store_num_per_user = conf.Store_Num_Per_User
@@ -129,7 +129,7 @@ class Workload:
                     time_new_order, time_payment):
         # 获取当前并发数
         thread_num = len(threading.enumerate())
-        # 加索
+        # 加锁
         self.lock.acquire()
         self.n_new_order = self.n_new_order + n_new_order
         self.n_payment = self.n_payment + n_payment
