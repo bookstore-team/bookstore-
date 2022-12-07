@@ -47,3 +47,17 @@ class Auth:
         url = urljoin(self.url_prefix, "unregister")
         r = requests.post(url, json=json)
         return r.status_code
+     
+    def search_title(self,search_key:str,store_id:str):
+        json={"search_key":search_key,"store_id":store_id}
+        url = urljoin(self.url_prefix, "search_title")
+
+        r=requests.post(url,json=json)
+        return r.status_code
+
+    def search_author(self,search_key:str,store_id:str):
+        json={"search_key":search_key,"store_id":store_id}
+        url = urljoin(self.url_prefix, "search_author")
+
+        r=requests.post(url,json=json)
+        return r.status_code

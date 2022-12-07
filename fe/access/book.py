@@ -93,5 +93,10 @@ class BookDB:
             # print(tags)
 
         return books
-
-
+'''
+if __name__ == "__main__":
+        book_db = BookDB()
+        books = book_db.get_book_info(0, 1) #随机生成一本书，开店后加入
+        for i in books:
+            print(i.id,i.title)
+'''
