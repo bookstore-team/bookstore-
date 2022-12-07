@@ -52,3 +52,21 @@ def change_password():
     u = user.User()
     code, message = u.change_password(user_id=user_id, old_password=old_password, new_password=new_password)
     return jsonify({"message": message}), code
+
+###lsq:精确搜索书名
+@bp_auth.route("/search_title", methods=["POST"])
+def search_title():
+    search_key=request.json.get("search_key")
+    store_id=request.json.get("store_id")
+    u=user.User()
+    code, message = u.search_title(search_key=search_key,store_id=store_id)
+    return jsonify({"message": message}), code
+
+###lsq:精确搜索作者名
+@bp_auth.route("/search_author", methods=["POST"])
+def search_author():
+    search_key=request.json.get("search_key")
+    store_id=request.json.get("store_id")
+    u=user.User()
+    code, message = u.search_author(search_key=search_key,store_id=store_id)
+    return jsonify({"message": message}), code
