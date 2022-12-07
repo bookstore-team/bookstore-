@@ -70,7 +70,7 @@ class TestCancelOrder:
         assert code==200
     
     ##已发货但未收货，买家申请取消
-    def test_cancel_after_dispatch_before_receiver(self):
+    def test_cancel_after_dispatch_before_receive(self):
         #随机生成一个书单
         ok, buy_book_id_list = self.gen_book.gen(non_exist_book_id=False, low_stock_level=False, max_book_count=5)
         assert ok
