@@ -5,8 +5,6 @@ import math
 import sqlite3 as sqlite
 from be.model import error
 from be.model import db_conn
-from be.model import store
-
 
 #导入表信息
 from be.model.init_database import User as Users
@@ -236,7 +234,7 @@ class User(db_conn.DBConn):
                 if len(row)==0: #没有找到与输入的书名匹配的书籍
                     return error.error_non_exist_book(search_key) #524
             self.conn.commit()
-            
+
         except BaseException as e:
             return 530, "{}".format(str(e))
         return 200, "ok"
@@ -284,8 +282,8 @@ class User(db_conn.DBConn):
             page_limit=20
             #全站搜索
             if store_id is None:
-                row=self.conn.query(Store).filter(Store.title.like('%'+search_key+'%')).all()
-                if len(row)==0: #没有找到与输入的信息匹配的书籍
+                row=self.conn.query(Store).filter(Store.title.like("%"+str(search_key)+"%")).all()
+                if len(row)==0: #没有找到与输入的标题信息匹配的书籍
                     return error.error_non_exist_book(search_key) #524
                 else:
                     #数据量少则不需要分页
@@ -300,13 +298,13 @@ class User(db_conn.DBConn):
                         for i in range(page_cnt):
                             total_result.append([]) #分别存储每一页数据
                             #先排序，按照顺序分页显示，分页显示用到的是limit限制一页的数据量，利用offset做偏移
-                            row=self.conn.query(Store).order_by(Store.book_id.asc()).filter(Store.title.like('%'+search_key+'%')).limit(page_limit).offset(i*page_cnt).all()
-                            for j in len(row):
+                            row=self.conn.query(Store).order_by(Store.book_id.asc()).filter(Store.title.like("%"+str(search_key)+"%")).limit(page_limit).offset(i*page_cnt).all()
+                            for j in row:
                                 total_result[i].append(j)
                             
             #店铺内搜索
             else:
-                row=self.conn.query(Store).filter(Store.title.like('%'+search_key+'%'),Store.store_id==store_id).all()
+                row=self.conn.query(Store).filter(Store.title.like("%"+str(search_key)+"%"),Store.store_id==store_id).all()
                 if len(row)==0: #没有找到与输入的信息匹配的书籍
                     return error.error_non_exist_book(search_key) #524
                 else:
@@ -322,8 +320,8 @@ class User(db_conn.DBConn):
                         for i in range(page_cnt):
                             total_result.append([]) #分别存储每一页数据
                             #先排序，按照顺序分页显示，分页显示用到的是limit限制一页的数据量，利用offset做偏移
-                            row=self.conn.query(Store).order_by(Store.book_id.asc()).filter(Store.title.like('%'+search_key+'%'),Store.store_id==store_id).limit(page_limit).offset(i*page_cnt).all()
-                            for j in len(row):
+                            row=self.conn.query(Store).order_by(Store.book_id.asc()).filter(Store.title.like("%"+str(search_key)+"%"),Store.store_id==store_id).limit(page_limit).offset(i*page_cnt).all()
+                            for j in row:
                                 total_result[i].append(j)
             self.conn.commit()
         except BaseException as e:
@@ -331,26 +329,160 @@ class User(db_conn.DBConn):
         return 200, "ok"
 
     ###lsq:模糊搜索作者
-    def search_author_inexact(self, search_key:str, store_id:str):
+    def search_author_inexact(self, search_key:str,store_id:str):
+        #如果搜索得到的结果数据较多，则需要结果分页
         try:
+            page_limit=20
             #全站搜索
             if store_id is None:
-                row=self.conn.query(Store).filter_by(author=search_key).all()
-                if len(row)==0: #没有找到输入的信息匹配的作者
-                    return error.error_non_exist_author(search_key)
+                row=self.conn.query(Store).filter(Store.author.like('%'+search_key+'%')).all()
+                if len(row)==0: #没有找到与输入的作者信息匹配的书籍
+                    return error.error_non_exist_author(search_key) #525
                 else:
-                    result_store=[] #存储售卖该作者作品的书店
-                    for i in row:
-                        result_store.append(i.store_id)
+                    #数据量少则不需要分页
+                    if(0<len(row)<=page_limit):
+                        result_store=[] #存储售卖该书的商店
+                        for i in row:
+                            result_store.append(i.store_id)
+                    else:
+                        #数据量多需要分页
+                        total_result=[] #分别存储所有页数据的集合
+                        page_cnt=math.ceil(len(row)/page_limit)
+                        for i in range(page_cnt):
+                            total_result.append([]) #分别存储每一页数据
+                            #先排序，按照顺序分页显示，分页显示用到的是limit限制一页的数据量，利用offset做偏移
+                            row=self.conn.query(Store).order_by(Store.book_id.asc()).filter(Store.author.like('%'+search_key+'%')).limit(page_limit).offset(i*page_cnt).all()
+                            for j in row:
+                                total_result[i].append(j)
+                            
             #店铺内搜索
             else:
-                row=self.conn.query(Store).filter_by(author=search_key,store_id=store_id).all()
-                if len(row)==0: #没有找到输入的信息匹配的作者
-                    return error.error_non_exist_author(search_key)
+                row=self.conn.query(Store).filter(Store.author.like('%'+search_key+'%'),Store.store_id==store_id).all()
+                if len(row)==0: #没有找到与输入的信息匹配的书籍
+                    return error.error_non_exist_author(search_key) #525
+                else:
+                    #数据量少则不需要分页
+                    if(0<len(row)<=page_limit):
+                        result_store=[] #存储售卖该书的商店
+                        for i in row:
+                            result_store.append(i.store_id)
+                    else:
+                        #数据量多需要分页
+                        total_result=[] #分别存储所有页数据的集合
+                        page_cnt=math.ceil(len(row)/page_limit)
+                        for i in range(page_cnt):
+                            total_result.append([]) #分别存储每一页数据
+                            #先排序，按照顺序分页显示，分页显示用到的是limit限制一页的数据量，利用offset做偏移
+                            row=self.conn.query(Store).order_by(Store.book_id.asc()).filter(Store.author.like('%'+search_key+'%'),Store.store_id==store_id).limit(page_limit).offset(i*page_cnt).all()
+                            for j in row:
+                                total_result[i].append(j)
             self.conn.commit()
         except BaseException as e:
             return 530, "{}".format(str(e))
         return 200, "ok"
 
     ###lsq:模糊搜索tag
-    ###lsq:模糊搜索comment
+    def search_tag_inexact(self, search_key:str,store_id:str):
+        #如果搜索得到的结果数据较多，则需要结果分页
+        try:
+            page_limit=20
+            #全站搜索
+            if store_id is None:
+                row=self.conn.query(Store).filter(Store.tag.like('%'+search_key+'%')).all()
+                if len(row)==0: #没有找到与输入的作者信息匹配的书籍
+                    return error.error_non_exist_tag(search_key) #526
+                else:
+                    #数据量少则不需要分页
+                    if(0<len(row)<=page_limit):
+                        result_store=[] #存储售卖该书的商店
+                        for i in row:
+                            result_store.append(i.store_id)
+                    else:
+                        #数据量多需要分页
+                        total_result=[] #分别存储所有页数据的集合
+                        page_cnt=math.ceil(len(row)/page_limit)
+                        for i in range(page_cnt):
+                            total_result.append([]) #分别存储每一页数据
+                            #先排序，按照顺序分页显示，分页显示用到的是limit限制一页的数据量，利用offset做偏移
+                            row=self.conn.query(Store).order_by(Store.book_id.asc()).filter(Store.tag.like('%'+search_key+'%')).limit(page_limit).offset(i*page_cnt).all()
+                            for j in row:
+                                total_result[i].append(j)
+                            
+            #店铺内搜索
+            else:
+                row=self.conn.query(Store).filter(Store.tag.like('%'+search_key+'%'),Store.store_id==store_id).all()
+                if len(row)==0: #没有找到与输入的信息匹配的书籍
+                    return error.error_non_exist_tag(search_key) #526
+                else:
+                    #数据量少则不需要分页
+                    if(0<len(row)<=page_limit):
+                        result_store=[] #存储售卖该书的商店
+                        for i in row:
+                            result_store.append(i.store_id)
+                    else:
+                        #数据量多需要分页
+                        total_result=[] #分别存储所有页数据的集合
+                        page_cnt=math.ceil(len(row)/page_limit)
+                        for i in range(page_cnt):
+                            total_result.append([]) #分别存储每一页数据
+                            #先排序，按照顺序分页显示，分页显示用到的是limit限制一页的数据量，利用offset做偏移
+                            row=self.conn.query(Store).order_by(Store.book_id.asc()).filter(Store.tag.like('%'+search_key+'%'),Store.store_id==store_id).limit(page_limit).offset(i*page_cnt).all()
+                            for j in row:
+                                total_result[i].append(j)
+            self.conn.commit()
+        except BaseException as e:
+            return 530, "{}".format(str(e))
+        return 200, "ok"  
+
+    ###lsq:模糊搜索content
+    def search_content_inexact(self, search_key:str,store_id:str):
+        #如果搜索得到的结果数据较多，则需要结果分页
+        try:
+            page_limit=20
+            #全站搜索
+            if store_id is None:
+                row=self.conn.query(Store).filter(Store.content.like('%'+search_key+'%')).all()
+                if len(row)==0: #没有找到与输入的目录信息匹配的书籍
+                    return error.error_non_exist_content(search_key) #527
+                else:
+                    #数据量少则不需要分页
+                    if(0<len(row)<=page_limit):
+                        result_store=[] #存储售卖该书的商店
+                        for i in row:
+                            result_store.append(i.store_id)
+                    else:
+                        #数据量多需要分页
+                        total_result=[] #分别存储所有页数据的集合
+                        page_cnt=math.ceil(len(row)/page_limit)
+                        for i in range(page_cnt):
+                            total_result.append([]) #分别存储每一页数据
+                            #先排序，按照顺序分页显示，分页显示用到的是limit限制一页的数据量，利用offset做偏移
+                            row=self.conn.query(Store).order_by(Store.book_id.asc()).filter(Store.content.like('%'+search_key+'%')).limit(page_limit).offset(i*page_cnt).all()
+                            for j in row:
+                                total_result[i].append(j)
+                            
+            #店铺内搜索
+            else:
+                row=self.conn.query(Store).filter(Store.content.like('%'+search_key+'%'),Store.store_id==store_id).all()
+                if len(row)==0: #没有找到与输入的信息匹配的书籍
+                    return error.error_non_exist_content(search_key) #526
+                else:
+                    #数据量少则不需要分页
+                    if(0<len(row)<=page_limit):
+                        result_store=[] #存储售卖该书的商店
+                        for i in row:
+                            result_store.append(i.store_id)
+                    else:
+                        #数据量多需要分页
+                        total_result=[] #分别存储所有页数据的集合
+                        page_cnt=math.ceil(len(row)/page_limit)
+                        for i in range(page_cnt):
+                            total_result.append([]) #分别存储每一页数据
+                            #先排序，按照顺序分页显示，分页显示用到的是limit限制一页的数据量，利用offset做偏移
+                            row=self.conn.query(Store).order_by(Store.book_id.asc()).filter(Store.content.like('%'+search_key+'%'),Store.store_id==store_id).limit(page_limit).offset(i*page_cnt).all()
+                            for j in row:
+                                total_result[i].append(j)
+            self.conn.commit()
+        except BaseException as e:
+            return 530, "{}".format(str(e))
+        return 200, "ok"     
