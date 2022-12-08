@@ -23,7 +23,8 @@ def auto_cancel(): #自动清除订单######CBY
     # conn=store.get_db_conn()
     # cursor=conn.execute("SELECT order_id,time,store_id FROM new_order WHERE order_status = ?", (0,))
     # rows = cursor.fetchall()    #((id,time,store_id ),(id,time,store_id ),...(id,time,store_id ))
-    engine = create_engine('postgresql://postgres:mbyc020905@localhost:5432/bookstore')
+    #engine = create_engine('postgresql://postgres:mbyc020905@localhost:5432/bookstore')
+    engine=create_engine("postgresql://postgres:lisiqi20020521@localhost:5432/bookstore")
         # 创建session
     DbSession = sessionmaker(bind=engine)
     session=DbSession()
