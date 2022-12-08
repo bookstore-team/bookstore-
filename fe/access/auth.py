@@ -48,6 +48,7 @@ class Auth:
         r = requests.post(url, json=json)
         return r.status_code
      
+    ### lsq:精确搜索title 
     def search_title(self,search_key:str,store_id:str):
         json={"search_key":search_key,"store_id":store_id}
         url = urljoin(self.url_prefix, "search_title")
@@ -55,9 +56,42 @@ class Auth:
         r=requests.post(url,json=json)
         return r.status_code
 
+    ### lsq:精确搜索author
     def search_author(self,search_key:str,store_id:str):
         json={"search_key":search_key,"store_id":store_id}
         url = urljoin(self.url_prefix, "search_author")
+
+        r=requests.post(url,json=json)
+        return r.status_code
+
+    ###lsq:模糊搜索title
+    def search_title_inexact(self, search_key:str,store_id:str):
+        json={"search_key":search_key,"store_id":store_id}
+        url = urljoin(self.url_prefix, "search_title_inexact")
+
+        r=requests.post(url,json=json)
+        return r.status_code
+
+    ###lsq:模糊搜索author
+    def search_author_inexact(self, search_key:str,store_id:str):
+        json={"search_key":search_key,"store_id":store_id}
+        url = urljoin(self.url_prefix, "search_author_inexact")
+
+        r=requests.post(url,json=json)
+        return r.status_code
+
+    ###lsq:模糊搜索tag
+    def search_tag_inexact(self, search_key:str,store_id:str):
+        json={"search_key":search_key,"store_id":store_id}
+        url = urljoin(self.url_prefix, "search_tag_inexact")
+
+        r=requests.post(url,json=json)
+        return r.status_code
+
+    ###lsq:模糊搜索content
+    def search_content_inexact(self, search_key:str,store_id:str):
+        json={"search_key":search_key,"store_id":store_id}
+        url = urljoin(self.url_prefix, "search_content_inexact")
 
         r=requests.post(url,json=json)
         return r.status_code
