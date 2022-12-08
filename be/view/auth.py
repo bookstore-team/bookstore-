@@ -70,3 +70,40 @@ def search_author():
     u=user.User()
     code, message = u.search_author(search_key=search_key,store_id=store_id)
     return jsonify({"message": message}), code
+
+###lsq:模糊搜索title
+@bp_auth.route("/search_title_inexact", methods=["POST"])
+def search_title_inexact():
+    search_key=request.json.get("search_key")
+    store_id=request.json.get("store_id")
+    u=user.User()
+    code, message = u.search_title_inexact(search_key=search_key,store_id=store_id)
+    return jsonify({"message": message}), code
+
+###lsq:模糊搜索author
+@bp_auth.route("/search_author_inexact", methods=["POST"])
+def search_author_inexact():
+    search_key=request.json.get("search_key")
+    store_id=request.json.get("store_id")
+    u=user.User()
+    code, message = u.search_author_inexact(search_key=search_key,store_id=store_id)
+    return jsonify({"message": message}), code
+
+###lsq:模糊搜索tag
+@bp_auth.route("/search_tag_inexact", methods=["POST"])
+def search_tag_inexact():
+    search_key=request.json.get("search_key")
+    store_id=request.json.get("store_id")
+    u=user.User()
+    code, message = u.search_tag_inexact(search_key=search_key,store_id=store_id)
+    return jsonify({"message": message}), code
+
+###lsq:模糊搜索content
+@bp_auth.route("/search_content_inexact", methods=["POST"])
+def search_content_inexact():
+    search_key=request.json.get("search_key")
+    store_id=request.json.get("store_id")
+    u=user.User()
+    code, message = u.search_content_inexact(search_key=search_key,store_id=store_id)
+    return jsonify({"message": message}), code
+    
